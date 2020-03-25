@@ -26,6 +26,8 @@ backend:
         - export BOOKING_TABLE_NAME=$(jq -r '.dataSources[] | select(.name == "BookingTable") | .dynamodbConfig.tableName' datasources.json)
         - export STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-UNDEFINED}
         - export STRIPE_PUBLIC_KEY=${STRIPE_PUBLIC_KEY:-UNDEFINED}
+        - export AMAZONPAY_SECRET_KEY=${AMAZONPAY_SECRET_KEY:-UNDEFINED}
+        - export AMAZONPAY_MERCHANT_ID=${AMAZONPAY_MERCHANT_ID:-UNDEFINED}
         ##
         # Export key deployed resources to System Manager Parameter Store
         ##
@@ -40,6 +42,8 @@ backend:
         - make export.parameter NAME="/${AWS_BRANCH}/service/amplify/storage/table/booking" VALUE=${BOOKING_TABLE_NAME}
         - make export.parameter NAME="/${AWS_BRANCH}/service/payment/stripe/secretKey" VALUE=${STRIPE_SECRET_KEY}
         - make export.parameter NAME="/${AWS_BRANCH}/service/payment/stripe/publicKey" VALUE=${STRIPE_PUBLIC_KEY}
+        - make export.parameter NAME="/${AWS_BRANCH}/service/payment/amazonpay/secretKey" VALUE=${AMAZONPAY_SECRET_KEY}
+        - make export.parameter NAME="/${AWS_BRANCH}/service/payment/amazonpay/publicKey" VALUE=${AMAZONPAY_MERCHANT_ID}
         ##
         # Deploy SAM based back-end
         ##

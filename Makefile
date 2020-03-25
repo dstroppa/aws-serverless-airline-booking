@@ -21,6 +21,7 @@ init: ##=> Install OS deps and dev tools
 deploy: ##=> Deploy services
 	$(info [*] Deploying...)
 	$(MAKE) deploy.payment
+	$(MAKE) deploy.payment-amazon-pay
 	$(MAKE) deploy.booking
 	$(MAKE) deploy.loyalty
 	$(MAKE) deploy.log-processing
@@ -28,14 +29,18 @@ deploy: ##=> Deploy services
 delete: ##=> Delete services
 	$(MAKE) delete.booking
 	$(MAKE) delete.payment
+	$(MAKE) delete.payment-amazon-pay
 	$(MAKE) delete.loyalty
 	$(MAKE) delete.log-processing
 
 delete.booking: ##=> Delete booking service
 	aws cloudformation delete-stack --stack-name $${STACK_NAME}-booking-$${AWS_BRANCH}
 
-delete.payment: ##=> Delete payment service
+delete.payment: ##=> Delete payment (Stripe) service
 	aws cloudformation delete-stack --stack-name $${STACK_NAME}-payment-$${AWS_BRANCH}
+
+delete.payment-amazon-pay: ##=> Delete payment (Amazon Pay) service
+	aws cloudformation delete-stack --stack-name $${STACK_NAME}-payment-amazon-pay-$${AWS_BRANCH}
 
 delete.loyalty: ##=> Delete booking service
 	aws cloudformation delete-stack --stack-name $${STACK_NAME}-loyalty-$${AWS_BRANCH}
@@ -62,7 +67,7 @@ deploy.booking: ##=> Deploy booking service using SAM
 				AppsyncApiId=/$${AWS_BRANCH}/service/amplify/api/id \
 				Stage=$${AWS_BRANCH}
 
-deploy.payment: ##=> Deploy payment service using SAM
+deploy.payment: ##=> Deploy payment (Stripe) service using SAM
 	$(info [*] Packaging and deploying Payment service...)
 	cd src/backend/payment && \
 		sam build && \
@@ -72,6 +77,19 @@ deploy.payment: ##=> Deploy payment service using SAM
 		sam deploy \
 			--template-file packaged.yaml \
 			--stack-name $${STACK_NAME}-payment-$${AWS_BRANCH} \
+			--capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
+			--parameter-overrides Stage=$${AWS_BRANCH}
+
+deploy.payment-amazon-pay: ##=> Deploy payment (Amazon Pay) service using SAM
+	$(info [*] Packaging and deploying Payment (Amazon Pay) service...)
+	cd src/backend/payment-amazon-pay && \
+		sam build && \
+		sam package \
+			--s3-bucket $${DEPLOYMENT_BUCKET_NAME} \
+			--output-template-file packaged.yaml && \
+		sam deploy \
+			--template-file packaged.yaml \
+			--stack-name $${STACK_NAME}-payment-amazon-pay-$${AWS_BRANCH} \
 			--capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
 			--parameter-overrides Stage=$${AWS_BRANCH}
 

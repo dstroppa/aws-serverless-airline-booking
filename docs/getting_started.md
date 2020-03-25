@@ -12,6 +12,8 @@ Before you deploy, you must have the following in place:
 * [Amplify CLI 4.13.1 or greater installed and configured](https://aws-amplify.github.io/docs/cli-toolchain/quickstart#quickstart)
 * [Stripe Account](https://dashboard.stripe.com/register)
     - Take note of your testing `Secret Key` and `Public Key` [located in the Stripe Dashboard](https://support.stripe.com/questions/locate-api-keys)
+* [Amazon Pay Account](pay.amazon.co.uk/signup) 
+    - Take note of your sandbox `Merchant ID` located in the Amazon Pay Dashboard and `Public Key ID` [you received](http://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-checkout/get-set-up-for-integration.html#4-get-your-publickeyid) from your Amazon Pay account manager
 
 For prototyping, you need the following:
 
@@ -26,9 +28,11 @@ Follow these instructions to deploy the Serverless Airline application:
 [![One-click deployment](https://oneclick.amplifyapp.com/button.svg)](https://console.aws.amazon.com/amplify/home#/deploy?repo=https://github.com/aws-samples/aws-serverless-airline-booking)
 
 1) Use **1-click deployment** button above
-2) Expand `environment variables` and add your Stripe's keys
+2) Expand `environment variables` and add your Stripe's and Amazon Pay's keys
     - `STRIPE_PUBLIC_KEY`
     - `STRIPE_SECRET_KEY`
+    - `AMAZONPAY_MERCHANT_ID`
+    - `AMAZONPAY_SECRET_KEY`
 3) If you don't have an IAM Service Role, create one
 4) Amplify Console forked this repository in your GitHub account, **clone your fork repo locally**
 5) Within your new app in Amplify Console, wait for deployment to complete (this may take a while)
